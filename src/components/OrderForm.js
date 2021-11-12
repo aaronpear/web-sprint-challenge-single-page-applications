@@ -13,8 +13,10 @@ const OrderForm = () => {
     const initialFormValues = {
         name: '',
         size: '',
-        topping1: false,
-        topping2: false,
+        skittles: false,
+        pepperoni: false,
+        cheetos: false,
+        mayonnaise: false,
         special: ''
     }
 
@@ -32,11 +34,14 @@ const OrderForm = () => {
     }
 
     const inputChange = (event) => {
-        const { name, value } = event.target;
-        yup.reach(schema, name).validate(value)
-            .then(() => setFormErrors({ ...formErrors, [name]: '' }))
-            .catch(error => setFormErrors({ ...formErrors, [name]: error.errors[0]}))
-        setFormValues({ ...formValues, [name]: value });
+        const { name, value, checked, type } = event.target;
+        const realValue = type === 'checkbox' ? checked : value;
+        if (name === 'name') {
+            yup.reach(schema, name).validate(value)
+                .then(() => setFormErrors({ ...formErrors, [name]: '' }))
+                .catch(error => setFormErrors({ ...formErrors, [name]: error.errors[0]}))
+        }
+        setFormValues({ ...formValues, [name]: realValue });
     }
 
     return (
@@ -56,7 +61,61 @@ const OrderForm = () => {
                         id='name-input'
                     />
                 </label>
-
+                <label>Size:
+                    <select
+                        onChange={inputChange}
+                        value={formValues.size}
+                        name='size'
+                        id='size-dropdown'
+                    >
+                        <option value=''>--Pick a Size--</option>
+                        <option value='small'>Small</option>
+                        <option value='medium'>Medium</option>
+                        <option value='large'>Large</option>
+                        <option value='extra large'>M E G A T H I C C</option>
+                    </select>
+                </label>
+                <label>Skittles
+                    <input
+                        type='checkbox'
+                        name='skittles'
+                        onChange={inputChange}
+                        checked={formValues.skittles}
+                    />
+                </label>
+                <label>Pepperoni
+                    <input
+                        type='checkbox'
+                        name='pepperoni'
+                        onChange={inputChange}
+                        checked={formValues.pepperoni}
+                    />
+                </label>
+                <label>Cheetos
+                    <input
+                        type='checkbox'
+                        name='cheetos'
+                        onChange={inputChange}
+                        checked={formValues.cheetos}
+                    />
+                </label>
+                <label>Mayonnaise
+                    <input
+                        type='checkbox'
+                        name='mayonnaise'
+                        onChange={inputChange}
+                        checked={formValues.mayonnaise}
+                    />
+                </label>
+                <label>Special Instructions:
+                    <input
+                        value={formValues.special}
+                        onChange={inputChange}
+                        name='special'
+                        type='text'
+                        id='special-text'
+                    />
+                </label>
                 <button
                     onClick={routeToConfirm}
                     id='order-button'
