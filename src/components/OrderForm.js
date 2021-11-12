@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
+import axios from "axios";
 
 const OrderForm = () => {
     const schema = yup.object().shape({
@@ -24,13 +25,31 @@ const OrderForm = () => {
         name: ''
     }
 
+    const initialOrders = [];
+
     const [formValues, setFormValues] = useState(initialFormValues);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
+    const [orders, setOrders] = useState(initialOrders)
 
     const history = useHistory();
 
     const routeToConfirm = () => {
-        history.push('/confirmation');
+        history.push('/pizza/confirmation');
+    }
+
+    const postNewOrder = newOrder => {
+        axios.post('https://reqres.in/api/orders', newOrder)
+            .then(response => {
+                console.log(response);
+                setOrders([response.data, ...orders]);
+                routeToConfirm();
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                setFormValues(initialFormValues);
+            })
     }
 
     const inputChange = (event) => {
@@ -44,9 +63,20 @@ const OrderForm = () => {
         setFormValues({ ...formValues, [name]: realValue });
     }
 
+    const submitForm = event => {
+        event.preventDefault();
+        const newOrder = {
+            name: formValues.name.trim(),
+            size: formValues.size,
+            toppings: ['skittles', 'pepperoni', 'cheetos', 'mayonnaise'].filter(topping => formValues[topping]),
+            special: formValues.special.trim()
+        }
+        postNewOrder(newOrder);
+    }
+
     return (
         <div>
-            <form id='pizza-form'>
+            <form id='pizza-form' onSubmit={submitForm}>
                 <div className='errors'>
                     <div>
                         {formErrors.name}
@@ -117,7 +147,7 @@ const OrderForm = () => {
                     />
                 </label>
                 <button
-                    onClick={routeToConfirm}
+                    // onClick={routeToConfirm}
                     id='order-button'
                 >
                     Add to Order
