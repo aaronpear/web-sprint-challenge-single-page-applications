@@ -4,6 +4,8 @@ import * as yup from 'yup';
 import axios from "axios";
 
 const OrderForm = () => {
+
+    // Yup schema only includes name now for sake of time
     const schema = yup.object().shape({
         name: yup
             .string()
@@ -33,7 +35,9 @@ const OrderForm = () => {
 
     const history = useHistory();
 
+    // Does not correctly push to URL; need to fix
     const routeToConfirm = () => {
+        // history.push('/confirmation');
         history.push('/pizza/confirmation');
     }
 
