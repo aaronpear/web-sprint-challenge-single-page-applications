@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import axios from "axios";
@@ -10,7 +10,16 @@ const OrderForm = () => {
         name: yup
             .string()
             .trim()
-            .min(2, 'name must be at least 2 characters')
+            .min(2, 'name must be at least 2 characters'),
+        size: yup
+            .string()
+            .required('pick a size!'),
+        skittles: yup.boolean(),
+        pepperoni: yup.boolean(),
+        cheetos: yup.boolean(),
+        mayonnaise: yup.boolean(),
+        special: yup
+            .string('text only!')
     })
     
     const initialFormValues = {
@@ -24,14 +33,18 @@ const OrderForm = () => {
     }
 
     const initialFormErrors = {
-        name: ''
+        name: '',
+        size: '',
+        special: ''
     }
 
     const initialOrders = [];
+    const initialDisabled = true;
 
     const [formValues, setFormValues] = useState(initialFormValues);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [orders, setOrders] = useState(initialOrders)
+    const [disabled, setDisabled] = useState(initialDisabled);
 
     const history = useHistory();
 
@@ -59,11 +72,9 @@ const OrderForm = () => {
     const inputChange = (event) => {
         const { name, value, checked, type } = event.target;
         const realValue = type === 'checkbox' ? checked : value;
-        if (name === 'name') {
-            yup.reach(schema, name).validate(value)
-                .then(() => setFormErrors({ ...formErrors, [name]: '' }))
-                .catch(error => setFormErrors({ ...formErrors, [name]: error.errors[0]}))
-        }
+        yup.reach(schema, name).validate(value)
+            .then(() => setFormErrors({ ...formErrors, [name]: '' }))
+            .catch(error => setFormErrors({ ...formErrors, [name]: error.errors[0]}))
         setFormValues({ ...formValues, [name]: realValue });
     }
 
@@ -78,13 +89,18 @@ const OrderForm = () => {
         postNewOrder(newOrder);
     }
 
+    useEffect(() => {
+        schema.isValid(formValues).then(valid => setDisabled(!valid));
+      }, [formValues])
+    
+
     return (
         <div>
             <form id='pizza-form' onSubmit={submitForm}>
                 <div className='errors'>
-                    <div>
-                        {formErrors.name}
-                    </div> 
+                    <div>{formErrors.name}</div>
+                    <div>{formErrors.size}</div>
+                    <div>{formErrors.special}</div> 
                 </div>
                 <label>Name:
                     <input
@@ -153,6 +169,7 @@ const OrderForm = () => {
                 <button
                     // onClick={routeToConfirm}
                     id='order-button'
+                    disabled={disabled}
                 >
                     Add to Order
                 </button>
