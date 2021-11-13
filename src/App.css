@@ -36,3 +36,57 @@
     transform: rotate(360deg);
   }
 }
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: deepskyblue;
+  border: 1px solid black;
+  margin: 2%;
+}
+
+.nav-item {
+  margin: 2% 2%;
+  text-decoration: none;
+}
+
+#pizza-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column wrap;
+  width: 70%;
+  /* border: 1px solid red; */
+  margin: 2%;
+  margin-left: 12.5%;
+}
+
+label {
+  margin: 1% 2%;
+}
+
+#order-button {
+  width: 50%;
+  align-self: center;
+}
+
+.errors {
+  align-self: center;
+}
+
+input {
+  margin-left: 5px;
+}
+
+select {
+  margin-left: 5px;
+}
+
+.confirmation-title {
+  font-size: 1000%;
+}
+
+p {
+  font-size: 80%;
+}

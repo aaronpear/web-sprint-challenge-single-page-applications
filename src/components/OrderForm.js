@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import axios from "axios";
+import '../App.css';
 
 const OrderForm = () => {
 
